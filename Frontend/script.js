@@ -2,7 +2,7 @@ document.getElementById('sentiment-form').addEventListener('submit', async funct
     event.preventDefault();
     const textInput = document.getElementById('text-input').value;
 
-    const response = await fetch('http://backend/analyze', {
+    const response = await fetch('http://localhost:8000/analyze', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ document.getElementById('sentiment-form').addEventListener('submit', async funct
 });
 
 async function fetchResults() {
-    const response = await fetch('http://backend/results');
+    const response = await fetch('http://localhost:8000/results');
     const results = await response.json();
 
     let historyHtml = '';
@@ -27,12 +27,13 @@ async function fetchResults() {
         let feedbackForm = '';
         if (!result[3]) {
             feedbackForm = `<form onsubmit="submitFeedback(event, ${result[0]})">
+                                <h5>Is the sentiment correct?</h5>
                                 <input type="radio" id="feedback-correct-${result[0]}" name="feedback-${result[0]}" value="correct" onclick="toggleCorrectSentiment(${result[0]}, false)">
                                 <label for="feedback-correct-${result[0]}">Yes</label><br>
                                 <input type="radio" id="feedback-incorrect-${result[0]}" name="feedback-${result[0]}" value="incorrect" onclick="toggleCorrectSentiment(${result[0]}, true)">
                                 <label for="feedback-incorrect-${result[0]}">No</label><br>
                                 <div id="correct-sentiment-${result[0]}" style="display: none;">
-                                    <h3>Please provide the correct sentiment:</h3>
+                                    <h5>Please provide the correct sentiment:</h5>
                                     <input type="radio" id="feedback-pos-${result[0]}" name="correct-feedback-${result[0]}" value="1">
                                     <label for="feedback-pos-${result[0]}">Positive</label><br>
                                     <input type="radio" id="feedback-neu-${result[0]}" name="correct-feedback-${result[0]}" value="0">
@@ -58,7 +59,6 @@ async function fetchResults() {
 function displayResult(result) {
     let sentimentText = getSentimentText(result.sentiment);
     document.getElementById('sentiment-label').innerText = `Sentiment: ${sentimentText}`;
-    document.getElementById('feedback').style.display = 'block';
 }
 
 function getSentimentText(sentimentValue) {
@@ -89,7 +89,7 @@ document.getElementById('feedback-form').addEventListener('submit', async functi
         feedbackData.correct_feedback = correctFeedbackValue;
     }
 
-    const response = await fetch('http://backend:8000/feedback', {
+    const response = await fetch('http://localhost:8000/feedback', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ async function submitFeedback(event, id) {
         feedbackData.correct_feedback = correctFeedbackValue;
     }
 
-    const response = await fetch('http://backend/feedback', {
+    const response = await fetch('http://localhost:8000/feedback', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
